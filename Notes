@@ -33,3 +33,15 @@ We can store past vendor pricing, but lets not store it every single time we get
 During the scraping process we will need to gather vendor specific information, maybe vendors have an about me | info | bio section, shipping terms, PGP information, registration date (how many days ago) Vendor Score, open orders, disputes - this information will need to be stored.
 
 Our site will offer a menu view to view products, but it will also offer vendor views to view all products from a single vendor; along with a summary of the vendor, stats, which market places its found on, deals completed, deals open, disputes etc. etc.
+
+
+many of these tor sites restrict sessions  but we can work parrallell and be grabbing data from multiple sites at once. like if we have 6 market placesx - we could be searching 2 different or 3 different market places at the same time using tors tabs; this way we can set safe limits per 
+market place like no more than 2 sessions per siete at a time, and no more than 10 page loads within a 30 second window - it means our scraper works slower but safer and not restricted - this is very imporant - and even better if our system can LEARN what each market places limits are and ride 
+safely JUST below that line . maybe we start with 2 sessions per siete, and if thats working, we try 3 sessions per siste, and we keep growing until we see disconnects or issues loading - when we detect issues or loading we stop for 10 seconds and then begin with 1 less session. 
+we store our findings for next time - and we even test them at a 1% basis to see if we can add another session or not. our injest needs to begin slow and safely to ensure its working, slowly increaseing its request until failure then backoff by 1.
+
+
+We want to be able to identify which listing belongs to which market so retain that information - later we may want to allow market admins to pay a fee so that all listings that are directed at there market place appear different - colorful/glowing/flashing etc. _market owner 
+pays $250 to have all MarketX listings flow Gold for 4 hours during a prime advertising slot. - we will already do this to some degree, as in all listings will include a badge to state which market they are on - listings that exist on multiple market places for the same price get rolled up and insteaed
+of multi lines per listing we just append more badges to the single line to show it can be found at these market places:
+
