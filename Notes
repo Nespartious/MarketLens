@@ -42,6 +42,6 @@ we store our findings for next time - and we even test them at a 1% basis to see
 
 
 We want to be able to identify which listing belongs to which market so retain that information - later we may want to allow market admins to pay a fee so that all listings that are directed at there market place appear different - colorful/glowing/flashing etc. _market owner 
-pays $250 to have all MarketX listings flow Gold for 4 hours during a prime advertising slot. - we will already do this to some degree, as in all listings will include a badge to state which market they are on - listings that exist on multiple market places for the same price get rolled up and insteaed
+pays $250 to have all MarketX listings flow Gold for 4 hours during a prime advertising slot. - we will already do this to some degree, as in all listings will include a badge to state which market they are on - listings that exist on multiple market places for the same price (or within 5%) get rolled up and insteaed
 of multi lines per listing we just append more badges to the single line to show it can be found at these market places:
 
