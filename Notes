@@ -27,3 +27,9 @@ when vendors or market owners set links, they only set the trailing portion of t
 Market owners there accounts will be like normal accounts with an additional Market Owner advertising options. They will need to prove ownership by decrypting a known good PGP (user signs up, they submit public pgp, i the admin VET this pgp to ensure its good, and then i approve or deny 
 there submission - if they can decrypt a challnege made using the public pgp then we confirm they have ownership of the private version - admin will need to manually verifiy all pgp verifications - vendors will also need to prove ownership - all of this is ok because all markets include
 pgp information and our tool can scrape that information as well.
+
+
+We can store past vendor pricing, but lets not store it every single time we get it, just store what we first see the price as, and then store it each time we see the price change - always serve the latest pricing.
+During the scraping process we will need to gather vendor specific information, maybe vendors have an about me | info | bio section, shipping terms, PGP information, registration date (how many days ago) Vendor Score, open orders, disputes - this information will need to be stored.
+
+Our site will offer a menu view to view products, but it will also offer vendor views to view all products from a single vendor; along with a summary of the vendor, stats, which market places its found on, deals completed, deals open, disputes etc. etc.
