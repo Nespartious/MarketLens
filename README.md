@@ -1,550 +1,515 @@
-TOR Market Intelligence Platform
-Technical White Paper
+# 🧅 TOR Market Intelligence Platform
+## Technical White Paper
 
-Version: 1.0
-Status: Architecture Definition
-Scope: Personal Use → Scalable TOR Service
+**Version:** 1.0  
+**Status:** Architecture Definition  
+**Scope:** Personal Use → Scalable TOR Service  
 
-1. Executive Summary
+---
 
-This project defines a two-application platform designed to collect, normalize, and present vendor product pricing data originating exclusively from TOR (.onion) marketplaces.
+# 1. Executive Summary
+
+This project defines a **two-application platform** designed to collect, normalize, and present vendor product pricing data originating exclusively from **TOR (.onion) marketplaces**.
 
 The system consists of:
 
-Tool 1 — Data Ingest Platform
+---
+
+## 🛠 Tool 1 — Data Ingest Platform
 
 A modular crawler and scraper responsible for:
 
-Navigating TOR marketplaces
+- [x] Navigating TOR marketplaces
+- [x] Extracting product listings
+- [x] Normalizing pricing and volume data
+- [x] Persisting structured market intelligence
+- [x] Supporting manual captcha resolution
+- [x] Operating continuously on a VM
 
-Extracting product listings
+---
 
-Normalizing pricing and volume data
+## 🌐 Tool 2 — TOR Catalog Website
 
-Persisting structured market intelligence
+A separate **read-only presentation layer** providing:
 
-Supporting manual captcha resolution
+- Clean product comparison views
+- Category organization
+- Value analysis *(price per volume)*
+- Vendor comparison
+- User-submitted marketplace discovery
+- Mirror-aware link handling
 
-Operating continuously on a VM
+> ✅ The two systems remain **strictly decoupled**.
 
-Tool 2 — TOR Catalog Website
+---
 
-A separate read-only presentation layer providing:
+# 2. System Philosophy
 
-Clean product comparison views
-
-Category organization
-
-Value analysis (price per volume)
-
-Vendor comparison
-
-User-submitted marketplace discovery
-
-Mirror-aware link handling
-
-The two systems remain strictly decoupled.
-
-2. System Philosophy
-
-This platform is not a scraper.
+This platform is **not a scraper**.
 
 It is a:
 
-Modular TOR-native Market Intelligence System
+> **Modular TOR-Native Market Intelligence System**
 
-Key principles:
+### Core Principles
 
-Isolation of responsibilities
+- Isolation of responsibilities
+- Failure tolerance
+- Human-assisted automation
+- Site-specific parsing
+- Data normalization first
+- Presentation independent from collection
 
-Failure tolerance
+---
 
-Human-assisted automation
+            ┌──────────────────────────┐
+            │   TOR MARKETPLACES       │
+            └─────────────┬────────────┘
+                          │
+                 TOR Network (.onion)
+                          │
+            ┌─────────────▼────────────┐
+            │  DATA INGEST PLATFORM    │
+            │  (Crawler / Scraper)     │
+            └─────────────┬────────────┘
+                          │
+                   PostgreSQL Database
+                          │
+            ┌─────────────▼────────────┐
+            │   TOR CATALOG WEBSITE    │
+            │        (Read Only)       │
+            └──────────────────────────┘
 
-Site-specific parsing
+# 3. System Overview
 
-Data normalization first
 
-Presentation independent from collection
 
-3. System Overview
-                ┌──────────────────────────┐
-                │   TOR MARKETPLACES       │
-                └─────────────┬────────────┘
-                              │
-                     TOR Network (.onion)
-                              │
-                ┌─────────────▼────────────┐
-                │  DATA INGEST PLATFORM    │
-                │  (Crawler / Scraper)     │
-                └─────────────┬────────────┘
-                              │
-                       PostgreSQL DB
-                              │
-                ┌─────────────▼────────────┐
-                │   TOR CATALOG WEBSITE    │
-                │      (Read Only)         │
-                └──────────────────────────┘
-4. Tool 1 — Data Ingest Platform
-4.1 Purpose
+---
 
-Continuously discover, crawl, and extract vendor product data from TOR sites and store it in a structured database suitable for analytics.
+# 4. Tool 1 — Data Ingest Platform
 
-4.2 Core Responsibilities
-Navigation
+---
 
-Crawl category pages
+## 4.1 Purpose
 
-Discover product listings
+Continuously discover, crawl, and extract vendor product data from TOR sites and store it in a structured analytics database.
 
-Handle pagination automatically
+---
 
-Recover from navigation failures
+## 4.2 Core Responsibilities
 
-Extraction
+### Navigation
 
-Collect:
+- Crawl category pages
+- Discover product listings
+- Handle pagination automatically
+- Recover from navigation failures
 
-Product name
+---
 
-Vendor name
+### Extraction
 
-Price
+Collected data:
 
-Currency
+- Product name
+- Vendor name
+- Price
+- Currency
+- Volume / weight
+- Listing URL
+- Category
+- Timestamp
+- Site source
 
-Volume / weight
+---
 
-Listing URL
+### Normalization
 
-Category
+All values converted into standardized units.
 
-Timestamp
+| Raw Value | Stored |
+|---|---|
+| 1oz | 28.349g |
+| 1000mg | 1g |
+| 3.5 grams | 3.5g |
 
-Site source
+---
 
-Normalization
+## 4.3 Technology Stack
 
-All data standardized into comparable units.
+### Backend
+- Python
 
-Examples:
+### Browser Automation
+- Playwright
 
-Raw Value	Stored
-1oz	28.349g
-1000mg	1g
-3.5 grams	3.5g
-4.3 Technology Stack
-Backend
+### Network Routing
+- TOR daemon (SOCKS5 proxy)
 
-Python
+### Database
+- PostgreSQL
 
-Browser Automation
+### Local Control UI
+- FastAPI
+- HTMX *(zero JavaScript philosophy)*
 
-Playwright
+---
 
-Network Routing
-
-TOR daemon (SOCKS5 proxy)
-
-Database
-
-PostgreSQL
-
-Local Control UI
-
-FastAPI
-
-HTMX (zero JavaScript philosophy)
-
-4.4 TOR Integration
-
-Browser traffic routes through:
+## 4.4 TOR Integration
 
 Tor daemon → SOCKS5 proxy → Playwright browser
 
-Advantages:
+### Advantages
 
-User-visible browsing
+- User-visible browsing
+- Manual captcha solving
+- Stable automation
+- True TOR anonymity
 
-Manual captcha solving
+---
 
-Stable automation
+## 4.5 Modular Site Adapter System
 
-Identical anonymity properties
-
-4.5 Modular Site Adapter System
-
-Each marketplace receives its own module.
-
+Each marketplace is implemented as its own module.
 /sites/
-    base_site.py
-    vendor_alpha.py
-    vendor_beta.py
-Required Adapter Methods
+base_site.py
+vendor_alpha.py
+vendor_beta.py
 
-starting URLs
 
-product discovery
+### Required Adapter Capabilities
 
-product extraction
+- Starting URLs
+- Product discovery
+- Product extraction
+- Pagination detection
+- Captcha detection
+- Failure handling
 
-pagination detection
+✅ Adding new sites requires **zero engine modification**.
 
-captcha detection
+---
 
-failure handling
+## 4.6 Crawl Engine
 
-Adding support for a new site requires zero engine modification.
-
-4.6 Crawl Engine
-Queue-Driven Model
-
-All navigation stored as jobs:
+### Queue-Driven Model
 
 crawl_jobs
------------
+
 url
 site
 status
 retry_count
 last_attempt
 
-Benefits:
 
-Crash recovery
 
-Pause/resume
+### Benefits
 
-Parallel crawling
+- Crash recovery
+- Pause / Resume
+- Parallel crawling
+- Full audit trail
 
-Auditability
+---
 
-4.7 Captcha System
+## 4.7 Captcha System
 
-All sites are assumed to require captcha interaction.
+All TOR sites are assumed to require captcha interaction.
 
-Phase 1 (Initial Design)
+### Phase 1 — Manual Resolution
 
-Manual resolution:
+1. Scraper pauses
+2. UI displays captcha state
+3. User solves captcha
+4. User presses **Resume**
+5. Crawl continues
 
-Scraper pauses
+---
 
-UI displays captcha state
+### Future Extensions (Reserved)
 
-User solves captcha
+- AI captcha solvers
+- External solving APIs
+- Behavioral automation
 
-User presses Resume
-
-Crawl continues
-
-Future Extension (Reserved)
-
-AI captcha solvers
-
-External solving APIs
-
-Behavioral automation
-
-Architecture includes plugin system:
 
 captcha_handlers/
-4.8 Failure Tolerance
 
-The crawler never stops globally.
+---
+
+## 4.8 Failure Tolerance
+
+The crawler **never stops globally**.
 
 Rules:
 
-Extraction failure → log → continue
+- Extraction failure → log → continue
+- Timeout → retry
+- Broken page → abandon safely
+- Site outage → pause site only
 
-Timeout → retry
+---
 
-Broken page → abandon safely
+## 4.9 Data Model
 
-Site outage → pause site only
+### Products
 
-4.9 Data Model
-Products
+Stores canonical listing data:
 
-Stores canonical listing.
+- normalized weight
+- normalized pricing
+- site origin
+- vendor identity
+- hash fingerprint
 
-Fields include:
+---
 
-normalized weight
+### Price History
 
-normalized pricing
+Each scrape generates a record enabling:
 
-site origin
+- Price tracking
+- Deal detection
+- Trend analysis
 
-vendor identity
+---
 
-hash fingerprint
-
-Price History
-
-Every scrape creates a record.
-
-Enables:
-
-price tracking
-
-deal detection
-
-trend analysis
-
-Vendor Table
-
+### Vendor Table
 Stores vendor identity independent of listings.
 
-Category Table
+### Category Table
+Supports cross-site grouping.
 
-Allows cross-site grouping.
+---
 
-4.10 Reserved Expansion — Reviews (V2)
+## 4.10 Reserved Expansion — Reviews (V2)
 
-The architecture intentionally leaves space for:
+Architecture reserves support for:
 
-Vendor reputation scores
+- Vendor reputation scores
+- Product reviews
+- Rating aggregation
+- Sentiment analysis
+- Cross-market reputation linking
 
-Product reviews
+Review ingestion will become a **secondary crawler pipeline**.
 
-Rating aggregation
+---
 
-Sentiment analysis
+# 5. Tool 2 — TOR Catalog Website
 
-Cross-market reputation linking
+---
 
-Review ingestion will become a secondary crawler pipeline.
+## 5.1 Purpose
 
-5. Tool 2 — TOR Catalog Website
-5.1 Purpose
+Provide a **clean, fast, private comparison interface** accessible exclusively via TOR.
 
-Provide a clean, fast, private comparison interface accessible exclusively through TOR.
+> ⚠️ This service **never scrapes**.  
+> It reads database data only.
 
-This service NEVER scrapes.
+---
 
-It reads database only.
+## 5.2 Design Philosophy
 
-5.2 Design Philosophy
+- No JavaScript required
+- Server-rendered pages
+- Extremely lightweight
+- Compatible with hardened TOR browsers
 
-No JavaScript required
+---
 
-Server-rendered pages
+## 5.3 Technology Stack
 
-Extremely lightweight
+- FastAPI
+- HTMX
+- Server templates
+- PostgreSQL (read-only)
+- TOR Hidden Service
 
-Compatible with hardened TOR browsers
+---
 
-5.3 Technology Stack
+## 5.4 Primary Features
 
-FastAPI
+### Category Browsing
+Products grouped by category.
 
-HTMX
+---
 
-Server templates
+### Default Sorting (Core Feature)
 
-PostgreSQL read-only connection
-
-TOR Hidden Service
-
-5.4 Primary Features
-Category Browsing
-
-Users view products grouped by category.
-
-Default Sorting (Core Feature)
-
-All listings sorted automatically by:
+Listings automatically sorted by:
 
 Price per Volume (Value Index)
 
-Cheapest value at top → most expensive bottom.
 
-Dynamic Price Competition Grids
+Cheapest value → Most expensive.
 
-System groups products whose value index falls within:
+---
+
+### Dynamic Price Competition Grids
+
+Products grouped when within:
 
 ±10% price-per-volume window
 
 Result:
 
-Users instantly see:
+> Immediate visibility of direct price competitors.
 
-Direct price competitors
+---
 
-This visually exposes market pricing tiers.
+### Filtering Options
 
-Filtering Options
+- Category
+- Vendor
+- Weight range
+- Price range
+- Value ranking
+- Newly added listings
+- Recently reduced prices
 
-Category
+---
 
-Vendor
-
-Weight range
-
-Price range
-
-Value ranking
-
-Newly added listings
-
-Recently reduced prices
-
-Direct Vendor Navigation
+### Direct Vendor Navigation
 
 Each listing provides:
 
-clickable link
+- Clickable link
+- Segmented link
+- Mirror-compatible navigation
 
-segmented link
+---
 
-mirror-compatible navigation
+## 5.5 Mirror-Aware Link System
 
-5.5 Mirror-Aware Link System
-
-Users may possess private mirrors.
+Users may use private mirrors.
 
 System stores:
 
+
 .onion base removed path
 
-Example storage:
+Example:/product/abc123
 
-/product/abc123
 
-Display options:
+### Display Options
 
-Full known onion link
+- Full known onion link
+- Path-only link for custom mirrors
+- Copy-ready URL segment
 
-Path-only link for custom mirrors
+---
 
-Copy-to-clipboard segment
+## 5.6 User URL Submission System
 
-User pastes onto personal mirror.
-
-5.6 User URL Submission System
-
-Users can submit new marketplace URLs.
+Users can submit marketplace URLs.
 
 System behavior:
 
-Store submission
+- Store submission
+- Normalize URL
+- Remove duplicates
+- Queue for manual review
+- Optional automated validation
 
-Normalize URL
+Maintains a unique marketplace registry.
 
-Remove duplicates
+---
 
-Queue for manual review
-
-Optional auto-validation later
-
-Database maintains unique marketplace registry.
-
-5.7 Privacy Principles
+## 5.7 Privacy Principles
 
 The website:
 
-performs no tracking
+- performs no tracking
+- stores no analytics cookies
+- executes no client JavaScript
+- leaks no external requests
 
-stores no analytics cookies
+---
 
-executes no client JS
+# 6. Deployment Model
 
-leaks no external requests
+## Data Ingest VM
 
-6. Deployment Model
-Data Ingest VM
+- Continuous operation
+- TOR service
+- Database write access
+- Local admin UI
 
-Continuous operation
+---
 
-Tor service
+## Viewer Server
 
-Database write access
+- Read-only database
+- TOR hidden service
+- Public access
 
-Local admin UI
+✅ Separation protects scraping infrastructure.
 
-Viewer Server
+---
 
-Read-only DB
+# 7. Security Design
 
-TOR hidden service
+- Ingest system never public-facing
+- Viewer cannot control crawler
+- Database permission separation
+- No remote execution paths
+- TOR isolation per service
 
-Public access
+---
 
-Separation protects scraping infrastructure.
+# 8. Scaling Strategy
 
-7. Security Design
+Future expansion supports:
 
-Ingest system never public-facing
+- Additional marketplaces
+- Distributed crawlers
+- Regional TOR nodes
+- Scheduled refresh crawling
+- Price alerts
+- Deal notifications
 
-Viewer cannot control crawler
+---
 
-DB permission separation
+# 9. Advanced Future Roadmap
 
-No remote execution paths
+## Phase 2
+- Review scraping
+- Vendor reputation scoring
 
-TOR isolation per service
+## Phase 3
+- Price anomaly detection
+- Automatic deal highlighting
 
-8. Scaling Strategy
+## Phase 4
+- Multi-node crawler cluster
 
-Future growth supports:
+## Phase 5
+- Predictive pricing analytics
 
-additional marketplaces
+---
 
-distributed crawlers
-
-regional TOR nodes
-
-scheduled refresh crawling
-
-price alerts
-
-deal notifications
-
-9. Advanced Future Roadmap
-Phase 2
-
-Review scraping
-
-Vendor reputation scoring
-
-Phase 3
-
-Price anomaly detection
-
-Automatic deal highlighting
-
-Phase 4
-
-Multi-node crawler cluster
-
-Phase 5
-
-Predictive pricing analytics
-
-10. Key Advantages
+# 10. Key Advantages
 
 This architecture enables:
 
-resilient TOR scraping
+- Resilient TOR scraping
+- Modular expansion
+- Human-assisted automation
+- Consistent product comparison
+- Anonymous catalog browsing
 
-modular expansion
+The system evolves from personal tooling into a full market intelligence platform **without redesign**.
 
-human-assisted automation
+---
 
-consistent product comparison
-
-anonymous catalog browsing
-
-The system evolves from personal tooling into a full market intelligence platform without redesign.
-
-11. Conclusion
+# 11. Conclusion
 
 The platform establishes:
 
-a structured TOR data ingestion engine
-
-a privacy-respecting comparison catalog
-
-a future-ready analytical framework
+- A structured TOR data ingestion engine
+- A privacy-respecting comparison catalog
+- A future-ready analytical framework
 
 By separating ingestion from presentation, the system remains maintainable, scalable, and operationally safe while supporting increasingly sophisticated analysis capabilities.
