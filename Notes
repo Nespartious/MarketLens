@@ -14,12 +14,23 @@ All user accounts have access to there own myspace like profile page where they 
 All Vendor | Market accounts can do the same as users with there profile page, but also gain access to a Vendor specific page where they can select 
 one of the auto scraped deals on the site and promote it - or they can add there own|New deal and include there own picture, title, description, weights, pricing 
 etc This will make use of a Coupon system - as these arent linked back to a real market and product link a user will need to copy the "Coupon" code and include it when they make a purchase; Example:
+
 '
 Coupon:PP12345abc
 Product 1, 15g
 Product 2, 5g
 Product 3, 1g
-'
+
+CustomerName
+CustomerAddress
+CustomerAddress_2
+
+Notes: Random notes
+
+-Thank you for using MarketLens! ID:0sdf5g4sdfg54sdfg21dsfg584sdfg5
+' - the user is expected to modify the customername and address info as well as populate any additional notes.
+-we can store how many users generate a coupon code, how many users view a page/product/vendor - and display this to vendors and market owners within there own control panel page (they will want to know how effective the advertising is)
+show view count/click count/coupon generation/peak site hours
 
 when vendors or market owners set links, they only set the trailing portion of the link - our site will maintain a list of safe main links (sdfsdfsdf.onion) and the vendors control what comnes after .onion/ "/product/listing/ASD21ASDF521SDFG54SDF" ETC
 
