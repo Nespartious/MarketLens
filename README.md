@@ -4,6 +4,12 @@
 **Version:** 1.0  
 **Status:** Architecture Definition  
 **Scope:** Personal Use → Scalable TOR Service  
+![Status](https://img.shields.io/badge/status-architecture-blue)
+![Stage](https://img.shields.io/badge/stage-active%20development-orange)
+![Python](https://img.shields.io/badge/python-3.11+-green)
+![License](https://img.shields.io/badge/license-private-lightgrey)
+![TOR](https://img.shields.io/badge/network-TOR-purple)
+![JS](https://img.shields.io/badge/frontend-zero%20javascript-black)
 
 ---
 
